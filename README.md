@@ -1,8 +1,8 @@
-# EXPERIMENT-05-Data-Publishing-to-IoT-Broker-Using-MQTT3
- ## NAME:SANJEEVI J
+# EXPERIMENT-06-Data-Publishing-to-IoT-Broker-Using-MQTT3
+ ## NAME: SANJEEVI J
  ## REGISTER NUMBER: 212222110040
- ## DEPARTMENT: CSE(IOT)
- ## YEAR: IV
+ ## DEPARTMENT:CSE(IOT)
+ ## YEAR:IV
  ## Aim:
 To publish data to an IoT broker using the MQTT protocol.
 
@@ -70,37 +70,65 @@ Message 'Hello, MQTT!' published to topic 'test/topic'
 Broker Message: The message "Hello, MQTT!" will be published to the topic test/topic.
 
 ## Python Code 
-
 ```
-pip install paho-mqtt
+!pip install paho-mqtt
 ```
-
 ```
+import time
 import paho.mqtt.client as mqtt
-broker_address = "broker.hivemq.com"
-broker_port = 1883
-topic = "test/topic"
 
-client = mqtt.Client()
-client.connect(broker_address, broker_port, keepalive=60)
-message = "hello MQTT"
-client.publish(topic,message)
+broker = "4c64564993cf4c17935a510839948e22.s1.eu.hivemq.cloud"
+port = 8883
+topic = "iot/demo/sensor"
+
+username = "hivemq.webclient.1762400995630"
+password = "1hr9eRWq!#6>FDPak8G?"
+
+client = mqtt.Client(client_id="python-publisher-001",
+                     callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
+
+client.username_pw_set(username, password)
+
+client.tls_set()          
+def on_connect(client, userdata, flags, reasonCode, properties):
+    print("Connected to broker, reasonCode:", reasonCode)
+
+def on_publish(client, userdata, mid):
+    print("on_publish called, mid:", mid)
+
+def on_disconnect(client, userdata, reasonCode, properties):
+    print("Disconnected, reasonCode:", reasonCode)
+
+client.on_connect = on_connect
+client.on_publish = on_publish
+client.on_disconnect = on_disconnect
+client.connect(broker, port, keepalive=60)
+client.loop_start()
+message = "srinidhi senthil"
+info = client.publish(topic, payload=message, qos=1, retain=True)
+
+info.wait_for_publish()
+
+time.sleep(0.2)
+
+client.loop_stop()
 client.disconnect()
-print(f"Message '{message}' published to topic '{topic}'")
-  
+
+print(f"Message '{message}' published to topic '{topic}' (qos=1 retain=True)")
 ```
+## output:
+
+<img width="1085" height="703" alt="image" src="https://github.com/user-attachments/assets/2b38886c-3e89-4202-b280-ff31cb4be64e" />
+
+
+
+
 
 
 
  ## Simulation Screenshots:
+<img width="1919" height="901" alt="image" src="https://github.com/user-attachments/assets/02446bef-3c22-428b-84c5-af42fc13fc39" />
 
- ![image](https://github.com/user-attachments/assets/9f49db22-26f5-486a-8bb7-df58902305fe)
-
-
-![image](https://github.com/user-attachments/assets/5de5ce45-5501-42cc-8e0e-9067f8fb1745)
-
-
-![image](https://github.com/user-attachments/assets/dd0b6267-6860-42a2-9c9a-b13559d7ebfb)
 
 
  ## Results:
